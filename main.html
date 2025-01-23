@@ -3,166 +3,661 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Language Selection</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <title>MediPal</title>
   <style>
+    /* Global Styles */
     body {
       margin: 0;
-      font-family: 'Cairo', sans-serif;
-      background-color: white;
-    }
-    .center {
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #d4e5f2;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
     }
-    .text {
+
+    .container {
       text-align: center;
+      width: 100%;
     }
-    .text h1 {
-      margin: 0;
-      font-size: 27px;
+
+    /* Logo Styling */
+    .logo {
+      display: block;
+      width: 150px;
+      height: auto;
+      margin: 0 auto 20px;
+    }
+
+    /* Title Styling */
+    .title {
+      font-size: 2rem;
+      color: #2d435c;
+      margin: 20px 0 10px;
       font-weight: bold;
-      color: black;
     }
-    .buttons {
-      margin-top: 30px;
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #2d435c;
+      margin: 5px 0 20px;
+    }
+
+    /* Button Container */
+    .button-container {
       display: flex;
       gap: 20px;
+      justify-content: center;
     }
-    button {
-      padding: 15px 30px;
-      font-size: 20px;
-      font-weight: bold;
+
+    .lang-button {
+      background-color: #2d435c;
       color: white;
-      background-color: #7AB1EA;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 10px 20px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
-    button:hover {
-      opacity: 0.9;
+
+    .lang-button:hover {
+      background-color: #3b5a7a;
+      transform: scale(1.05);
     }
-    .container {
+
+    .lang-button:active {
+      transform: scale(0.95);
+    }
+
+    /* Input Container */
+    .input-container {
+      margin-top: 20px;
+    }
+
+    .input-field {
       width: 300px;
-      padding: 20px;
-      background-color: white;
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      border: 2px solid #2d435c;
+      border-radius: 5px;
+      font-size: 1rem;
       text-align: center;
     }
-    input {
-      width: calc(100% - 20px);
-      padding: 10px;
-      margin: 20px 0;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 16px;
+
+    .input-label {
+      font-size: 1.2rem;
+      color: #2d435c;
+      margin-bottom: 10px;
+      display: block;
     }
-    .side-panel {
-      width: 150px;
-      background-color: #7AB1EA;
+
+    /* Sidebar Styling */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100%;
+      background-color: #f1f5f9;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
+      padding-top: 20px;
     }
-    .side-panel img {
-        margin: 20px 0;
-        width: 100px; /* Increased size */
-        height: 100px; /* Increased size */
-        cursor: pointer;
-      }
+
+    .sidebar img {
+      width: 50px;
+      height: auto;
+      margin: 20px 0;
+      cursor: pointer;
+    }
+
+    /* Content Container */
     .content {
-      flex: 1;
+      margin-right: 100px; /* Account for sidebar width */
+      width: calc(100% - 100px);
+      text-align: center;
+    }
+
+    /* Timer Circle */
+    .circle {
+      width: 100px;
+      height: 100px;
+      border: 5px solid #2d435c;
+      border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #2d435c;
+      margin: 20px auto;
     }
-    .main {
-      display: flex;
-      height: 100vh;
+
+    /* Questionnaire Styles */
+    .interface {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .interface.active {
+      display: block;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    button {
+      font-size: 16px;
+      margin: 5px;
+      padding: 10px 20px;
+      background-color: #003366;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #00509e;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
   </style>
-</head>
-<body>
-  <div id="app"></div>
-
   <script>
-    const app = document.getElementById('app');
+    let currentLanguage = 'en'; // Default to English
 
-    function renderLanguageSelection() {
-      app.innerHTML = `
-        <div class="center">
-          <div class="text">
-            <h1>اختر لغتك</h1>
-            <h1>Choose Your Language</h1>
-          </div>
-          <div class="buttons">
-            <button onclick="renderEnglishScreen()">English</button>
-            <button onclick="renderArabicScreen()">العربية</button>
-          </div>
-        </div>
-      `;
+    function goToLanguageSelection() {
+      document.getElementById('screen-1').style.display = 'none';
+      document.getElementById('screen-2').style.display = 'flex';
     }
 
-    function renderEnglishScreen() {
-      app.innerHTML = `
-        <div class="center">
-          <div class="container">
-            <h1>Enter Your File Number</h1>
-            <input type="text" placeholder="File Number">
-            <button onclick="renderGreetingScreen('Hello Mohammed, Get Well Soon!', true)">Continue</button>
-          </div>
-        </div>
-      `;
+    function setLanguage(lang) {
+      currentLanguage = lang;
+      document.getElementById('screen-2').style.display = 'none';
+      document.getElementById(currentLanguage === 'en' ? 'screen-3' : 'screen-3-ar').style.display = 'flex'
     }
 
-    function renderArabicScreen() {
-      app.innerHTML = `
-        <div class="center">
-          <div class="container">
-            <h1>ادخل رقم الملف</h1>
-            <input type="text" placeholder="رقم الملف">
-            <button onclick="renderGreetingScreen('أهلاً محمد، سلامتك', false)">متابعة</button>
-          </div>
-        </div>
-      `;
+    function goToFileInput() {
+      document.getElementById(currentLanguage === 'en' ? 'screen-3' : 'screen-3-ar').style.display = 'none'
+      document.getElementById(currentLanguage === 'en' ? 'screen-4' : 'screen-4-ar').style.display = 'flex';
     }
 
-    function renderGreetingScreen(message, isEnglish) {
-      app.innerHTML = `
-        <div class="main">
-          <div class="side-panel">
-            <img src="C:\logo.png" alt="Robot Icon">
-              <img src="C:\heart.png" alt="Heart Icon">
-              <img src="C:\note.png" alt="Note Icon">
-          </div>
-          <div class="content">
-            <h1 style="font-size: ${isEnglish ? '24px' : '50px'}">${message}</h1>
-          </div>
-        </div>
-      `;
+    function goToPressureInstructions() {
+      document.getElementById(currentLanguage === 'en' ? 'screen-4' : 'screen-4-ar').style.display = 'none';
+      document.getElementById(currentLanguage === 'en' ? 'screen-5' : 'screen-5-ar').style.display = 'flex';
     }
-    function renderGreetingScreen(message, isArabic) {
-        app.innerHTML = `
-          <div class="main">
-            <div class="side-panel">
-              <img src="C:\logo.png" alt="Robot Icon">
-              <img src="C:\heart.png" alt="Heart Icon">
-              <img src="C:\note.png" alt="Note Icon">
-            </div>
-            <div class="content">
-              <h1 class="${isArabic ? 'arabic' : ''}">${message}</h1>
-              
-            </div>
-          </div>
-        `;
+
+    function goToPressureStep() {
+      document.getElementById(currentLanguage === 'en' ? 'screen-5' : 'screen-5-ar').style.display = 'none';
+      document.getElementById(currentLanguage === 'en' ? 'screen-6' : 'screen-6-ar').style.display = 'flex';
+    }
+
+    function goToTimerScreen() {
+      document.getElementById(currentLanguage === 'en' ? 'screen-6' : 'screen-6-ar').style.display = 'none';
+      document.getElementById(currentLanguage === 'en' ? 'screen-7' : 'screen-7-ar').style.display = 'flex';
+
+      let timer = 30;
+      const circle = document.getElementById('timer-circle');
+      const interval = setInterval(() => {
+        circle.textContent = timer;
+        timer--;
+        if (timer < 0) {
+          clearInterval(interval);
+          goToFinishStep();
+        }
+      }, 1000);
+      let timer2 = 30;
+      const circle2 = document.getElementById('timer-circle2');
+      const interval2 = setInterval(() => {
+        circle2.textContent = timer2;
+        timer2--;
+        if (timer2 < 0) {
+          clearInterval(interval2);
+          goToFinishStep();
+        }
+      }, 1000);
+    }
+
+    function goToFinishStep() {
+      document.getElementById(currentLanguage === 'en' ? 'screen-7' : 'screen-7-ar').style.display = 'none';
+      document.getElementById(currentLanguage === 'en' ? 'screen-8' : 'screen-8-ar').style.display = 'flex';
+    }
+
+    function goToOxygenInstructions() {
+      document.getElementById(currentLanguage === 'en' ? 'screen-8' : 'screen-8-ar').style.display = 'none';
+      document.getElementById(currentLanguage === 'en' ? 'screen-9' : 'screen-9-ar').style.display = 'flex';
+    }
+
+    function goToFirstOxygenTimer() {
+      document.getElementById(currentLanguage === 'en' ? 'screen-9' : 'screen-9-ar').style.display = 'none';
+      document.getElementById(currentLanguage === 'en' ? 'screen-10' : 'screen-10-ar').style.display = 'flex';
+      
+      let timer = 5;
+      const circle = document.getElementById('oxygen-timer-1');
+      const interval = setInterval(() => {
+        circle.textContent = timer;
+        timer--;
+        if (timer < 0) {
+          clearInterval(interval);
+          goToSecondOxygenTimer();
+        }
+      }, 1000);
+
+      let timer22 = 5;
+      const circle22= document.getElementById('oxygen-timer-22');
+      const interval22 = setInterval(() => {
+        circle22.textContent = timer22;
+        timer22--;
+        if (timer22 < 0) {
+          clearInterval(interval22);
+          goToSecondOxygenTimer();
+        }
+      }, 1000);
+    }
+
+    function goToSecondOxygenTimer() {
+      document.getElementById(currentLanguage === 'en' ? 'screen-10' : 'screen-10-ar').style.display = 'none';
+      document.getElementById(currentLanguage === 'en' ? 'screen-11' : 'screen-11-ar').style.display = 'flex';
+      
+      let timer = 10;
+      const circle = document.getElementById('oxygen-timer-2');
+      const interval = setInterval(() => {
+        circle.textContent = timer;
+        timer--;
+        if (timer < 0) {
+          clearInterval(interval);
+          goToFinalStep();
+        }
+      }, 1000);
+      let timer33 = 10;
+      const circle33 = document.getElementById('oxygen-timer-33');
+      const interval33 = setInterval(() => {
+        circle33.textContent = timer33;
+        timer33--;
+        if (timer33 < 0) {
+          clearInterval(interval33);
+          goToFinalStep();
+        }
+      }, 1000);
+    }
+
+    function goToFinalStep() {
+      document.getElementById(currentLanguage === 'en' ? 'screen-11' : 'screen-11-ar').style.display = 'none';
+      document.getElementById(currentLanguage === 'en' ? 'screen-12' : 'screen-12-ar').style.display = 'flex';
+    }
+
+    function goToQuestionnaire() {
+      document.getElementById(currentLanguage === 'en' ? 'screen-12' : 'screen-12-ar').style.display = 'none';
+      document.getElementById('questionnaire-container').style.display = 'block';
+      showInterface(8); // Show the first questionnaire interface
+    }
+
+
+function goToQuestionnaireAr() {
+      document.getElementById(currentLanguage === 'en' ? 'screen-12' : 'screen-12-ar').style.display = 'none';
+      document.getElementById('questionnaire-Ar').style.display = 'block';
+      showInterface(1); // Show the first questionnaire interface
+    }
+
+    // Questionnaire functions
+    let currentInterface = 8;
+    const totalInterfaces = 14;
+    let currentInterfaceAr = 1;
+    const totalInterfacesAr = 7;
+
+    function showInterface(index) {
+      document.querySelectorAll('.interface').forEach((div, i) => {
+        div.classList.remove('active');
+        if (i === index - 1) {
+          div.classList.add('active');
+        }
+      });
+    }
+
+    function nextInterfaceAr() {
+        if (currentInterfaceAr < totalInterfacesAr) {
+          currentInterfaceAr++;
+          showInterface(currentInterfaceAr);
+        }
       }
 
-    renderLanguageSelection();
+    function nextInterface() {
+      if (currentInterface < totalInterfaces) {
+        currentInterface++;
+        showInterface(currentInterface);
+      }
+    }
+
+    function previousInterfaceAr() {
+        if (currentInterfaceAr > 1) {
+          currentInterfaceAr--;
+          showInterface(currentInterfaceAr);
+        }
+      }
+    function previousInterface() {
+      if (currentInterface > 1) {
+        currentInterface--;
+        showInterface(currentInterface);
+      }
+    }
+
+    window.onload = function() {
+      setTimeout(goToLanguageSelection, 5000); // Automatically go to language selection after 5 seconds
+    };
   </script>
-</body>
-</html>
+</head>
+<body>
+  <!-- Sidebar for Right-Side Logo and Icons -->
+  <div class="sidebar">
+    <img src="path-to-right-logo.png" alt="Right Logo"> <!-- Add the right logo image here -->
+    <img src="path-to-icon1.png" alt="Icon 1"> <!-- Add the first icon here -->
+    <img src="path-to-icon2.png" alt="Icon 2"> <!-- Add the second icon here -->
+  </div>
+
+  <!-- Screen 1: Logo -->
+  <div id="screen-1" class="container">
+    <div class="content">
+      <img src="C:\Users\ragha\Desktop\website images\logo.png" alt="MediPal Logo" class="logo">
+    </div>
+  </div>
+
+  <!-- Screen 2: Language Selection -->
+  <div id="screen-2" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">اختر لغتك</h1>
+      <p class="subtitle">Choose Your Language</p>
+      <div class="button-container">
+        <button class="lang-button" onclick="setLanguage('en')">English</button>
+        <button class="lang-button" onclick="setLanguage('ar')">العربية</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3: File Input -->
+  <div id="screen-3" class="container" style="display: none;">
+    <div class="content">
+      <label class="input-label" for="file-id">Enter your file number</label>
+      <div class="input-container">
+        <input type="text" id="file-id" class="input-field" placeholder="" />
+        <button class="lang-button" onclick="goToFileInput()">Next</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- English Screens -->
+  <div id="screen-4" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">Hello Mohammed</h1>
+      <button class="lang-button" onclick="goToPressureInstructions()">Next</button>
+    </div>
+  </div>
+
+  <div id="screen-5" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">To measure the blood pressure</h1>
+      <p class="subtitle">Follow the instructions</p>
+      <button class="lang-button" onclick="goToPressureStep()">Next</button>
+    </div>
+  </div>
+
+  <div id="screen-6" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">Put your arm into the blood pressure device</h1>
+      <button class="lang-button" onclick="goToTimerScreen()">Next</button>
+    </div>
+  </div>
+
+  <div id="screen-7" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">Wait until the time is over</h1>
+      <div id="timer-circle" class="circle">30</div>
+    </div>
+  </div>
+
+  <div id="screen-8" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">Take your arm out</h1>
+      <button class="lang-button" onclick="goToOxygenInstructions()">Next</button>
+    </div>
+  </div>
+
+  <div id="screen-9" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">To measure oxygen and body temperature</h1>
+      <p class="subtitle">Follow the following instructions</p>
+      <button class="lang-button" onclick="goToFirstOxygenTimer()">Next</button>
+    </div>
+  </div>
+
+  <div id="screen-10" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">Put your finger in the middle of the sensor</h1>
+      <p class="subtitle">Wait until the time ends</p>
+      <div id="oxygen-timer-1" class="circle">5</div>
+    </div>
+  </div>
+
+  <div id="screen-11" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">Put your wrist in the middle of the sensor</h1>
+      <p class="subtitle">Wait until the time ends</p>
+      <div id="oxygen-timer-2" class="circle">10</div>
+    </div>
+  </div>
+
+  <div id="screen-12" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">The procedure is done</h1>
+      <button class="lang-button" onclick="goToQuestionnaire()">Next</button>
+    </div>
+  </div>
+
+  <div id="screen-3-ar" class="container" style="display: none;">
+    <div class="content">
+      <label class="input-label" for="file-id">أدخل رقم ملفك</label>
+      <div class="input-container">
+        <input type="text" id="file-id" class="input-field" placeholder="" />
+        <button class="lang-button" onclick="goToFileInput()">التالي</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arabic Screens -->
+<div id="screen-4-ar" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">مرحبا محمد</h1>
+      <button class="lang-button" onclick="goToPressureInstructions()">التالي</button>
+    </div>
+  </div>
+  
+  <div id="screen-5-ar" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">لقياس ضغط الدم</h1>
+      <p class="subtitle">اتبع التعليمات</p>
+      <button class="lang-button" onclick="goToPressureStep()">التالي</button>
+    </div>
+  </div>
+  
+  <div id="screen-6-ar" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">ضع ذراعك في جهاز ضغط الدم</h1>
+      <button class="lang-button" onclick="goToTimerScreen()">التالي</button>
+    </div>
+  </div>
+  
+  <!-- Arabic Timer and Results -->
+  <div id="screen-7-ar" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">انتظر حتى ينتهي الوقت</h1>
+      <div id="timer-circle2" class="circle">30</div>
+    </div>
+  </div>
+  
+  <div id="screen-8-ar" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">قم بإخراج ذراعك</h1>
+      <button class="lang-button" onclick="goToOxygenInstructions()">التالي</button>
+    </div>
+  </div>
+  
+  <div id="screen-9-ar" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">لقياس الأكسجين ودرجة حرارة الجسم</h1>
+      <p class="subtitle">اتبع التعليمات</p>
+      <button class="lang-button" onclick="goToFirstOxygenTimer()">التالي</button>
+    </div>
+  </div>
+  
+  <!-- Oxygen Measurement Screens -->
+  <div id="screen-10-ar" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">ضع إصبعك في منتصف المستشعر</h1>
+      <p class="subtitle">انتظر حتى ينتهي الوقت</p>
+      <div id="oxygen-timer-22" class="circle">5</div>
+    </div>
+  </div>
+  
+  <div id="screen-11-ar" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">ضع معصمك في منتصف المستشعر</h1>
+      <p class="subtitle">انتظر حتى ينتهي الوقت</p>
+      <div id="oxygen-timer-33" class="circle">10</div>
+    </div>
+  </div>
+  
+  <div id="screen-12-ar" class="container" style="display: none;">
+    <div class="content">
+      <h1 class="title">تم الانتهاء من الإجراء</h1>
+      <button class="lang-button" onclick="goToQuestionnaireAr()">التالي</button>
+    </div>
+  </div>
+  
+  <!-- Arabic Questionnaire -->
+  <div id="questionnaire-Ar" class="container" style="display: none;">
+    <div id="interface-1" class="interface active">
+      <h2>هل تعاني من ارتفاع ضغط الدم؟</h2>
+      <div class="buttons">
+        <button onclick="nextInterfaceAr()">نعم</button>
+        <button onclick="nextInterfaceAr()">لا</button>
+        <button onclick="previousInterfaceAr()">العوده</button>
+      </div>
+    </div>
+  
+    <div id="interface-2" class="interface">
+      <h2>هل تعاني من الصداع؟</h2>
+      <div class="buttons">
+        <button onclick="nextInterfaceAr()">نعم</button>
+        <button onclick="nextInterfaceAr()">لا</button>
+        <button onclick="previousInterfaceAr()">العوده</button>
+      </div>
+    </div>
+  
+    <div id="interface-3" class="interface">
+      <h2>هل تعاني من الدوار؟</h2>
+      <div class="buttons">
+        <button onclick="nextInterfaceAr()">نعم</button>
+        <button onclick="nextInterfaceAr()">لا</button>
+        <button onclick="previousInterfaceAr()">العوده</button>
+      </div>
+    </div>
+  
+    <div id="interface-4" class="interface">
+      <h2>هل تعاني من ضيق في التنفس؟</h2>
+      <div class="buttons">
+        <button onclick="nextInterfaceAr()">نعم</button>
+        <button onclick="nextInterfaceAr()">لا</button>
+        <button onclick="previousInterfaceAr()">العوده</button>
+      </div>
+    </div>
+  
+    <div id="interface-5" class="interface">
+      <h2>هل تعاني من تورم الأقدام؟</h2>
+      <div class="buttons">
+        <button onclick="nextInterfaceAr()">نعم</button>
+        <button onclick="nextInterfaceAr()">لا</button>
+        <button onclick="previousInterfaceAr()">العوده</button>
+      </div>
+    </div>
+  
+    <div id="interface-6" class="interface">
+      <h2>هل لديك أي شي اخر؟</h2>
+      <div class="buttons">
+        <button onclick="nextInterfaceAr()">نعم</button>
+        <button onclick="nextInterfaceAr()">لا</button>
+        <button onclick="previousInterfaceAr()">العوده</button>
+      </div>
+    </div>
+    <div id="interface-7" class="interface">
+        <h2>شكراً لك</h2>
+      </div>
+  </div>
+  
+  <!-- English Questionnaire -->
+  <div id="questionnaire-container" class="container" style="display: none;">
+    <div id="interface-8" class="interface active">
+      <h2>Do you have high blood pressure?</h2>
+      <div class="buttons">
+        <button onclick="nextInterface()">Yes</button>
+        <button onclick="nextInterface()">No</button>
+        <button onclick="previousInterface()" disabled>Back</button>
+      </div>
+    </div>
+  
+    <div id="interface-9" class="interface">
+      <h2>Do you have headache?</h2>
+      <div class="buttons">
+        <button onclick="nextInterface()">Yes</button>
+        <button onclick="nextInterface()">No</button>
+        <button onclick="previousInterface()">Back</button>
+      </div>
+    </div>
+  
+    <div id="interface-10" class="interface">
+      <h2>Do you feel dizzy?</h2>
+      <div class="buttons">
+        <button onclick="nextInterface()">Yes</button>
+        <button onclick="nextInterface()">No</button>
+        <button onclick="previousInterface()">Back</button>
+      </div>
+    </div>
+  
+    <div id="interface-11" class="interface">
+      <h2>Do you have shortness of breath?</h2>
+      <div class="buttons">
+        <button onclick="nextInterface()">Yes</button>
+        <button onclick="nextInterface()">No</button>
+        <button onclick="previousInterface()">Back</button>
+      </div>
+    </div>
+  
+    <div id="interface-12" class="interface">
+      <h2>Do you have swollen feet?</h2>
+      <div class="buttons">
+        <button onclick="nextInterface()">Yes</button>
+        <button onclick="nextInterface()">No</button>
+        <button onclick="previousInterface()">Back</button>
+      </div>
+    </div>
+  
+    <div id="interface-13" class="interface">
+      <h2>Do you have anything else?</h2>
+      <div class="buttons">
+        <button onclick="nextInterface()">Yes</button>
+        <button onclick="nextInterface()">No</button>
+        <button onclick="previousInterface()">Back</button>
+      </div>
+    </div>
+    <div id="interface-14" class="interface">
+        <h2>Thank you!</h2>
+      </div>
+</div>
+  </div>
