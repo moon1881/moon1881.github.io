@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Language Selection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: white;
+    }
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .text {
+      text-align: center;
+    }
+    .text h1 {
+      margin: 0;
+      font-size: 27px;
+      font-weight: bold;
+      color: black;
+    }
+    .buttons {
+      margin-top: 30px;
+      display: flex;
+      gap: 20px;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+      background-color: #7AB1EA;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .container {
+      width: 300px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 20px 0;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    .side-panel {
+      width: 150px;
+      background-color: #7AB1EA;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .side-panel img {
+        margin: 20px 0;
+        width: 100px; /* Increased size */
+        height: 100px; /* Increased size */
+        cursor: pointer;
+      }
+    .content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .main {
+      display: flex;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const app = document.getElementById('app');
+
+    function renderLanguageSelection() {
+      app.innerHTML = `
+        <div class="center">
+          <div class="text">
+            <h1>اختر لغتك</h1>
+            <h1>Choose Your Language</h1>
+          </div>
+          <div class="buttons">
+            <button onclick="renderEnglishScreen()">English</button>
+            <button onclick="renderArabicScreen()">العربية</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderEnglishScreen() {
+      app.innerHTML = `
+        <div class="center">
+          <div class="container">
+            <h1>Enter Your File Number</h1>
+            <input type="text" placeholder="File Number">
+            <button onclick="renderGreetingScreen('Hello Mohammed, Get Well Soon!', true)">Continue</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderArabicScreen() {
+      app.innerHTML = `
+        <div class="center">
+          <div class="container">
+            <h1>ادخل رقم الملف</h1>
+            <input type="text" placeholder="رقم الملف">
+            <button onclick="renderGreetingScreen('أهلاً محمد، سلامتك', false)">متابعة</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGreetingScreen(message, isEnglish) {
+      app.innerHTML = `
+        <div class="main">
+          <div class="side-panel">
+            <img src="C:\logo.png" alt="Robot Icon">
+              <img src="C:\heart.png" alt="Heart Icon">
+              <img src="C:\note.png" alt="Note Icon">
+          </div>
+          <div class="content">
+            <h1 style="font-size: ${isEnglish ? '24px' : '50px'}">${message}</h1>
+          </div>
+        </div>
+      `;
+    }
+    function renderGreetingScreen(message, isArabic) {
+        app.innerHTML = `
+          <div class="main">
+            <div class="side-panel">
+              <img src="C:\logo.png" alt="Robot Icon">
+              <img src="C:\heart.png" alt="Heart Icon">
+              <img src="C:\note.png" alt="Note Icon">
+            </div>
+            <div class="content">
+              <h1 class="${isArabic ? 'arabic' : ''}">${message}</h1>
+              
+            </div>
+          </div>
+        `;
+      }
+
+    renderLanguageSelection();
+  </script>
+</body>
+</html>
