@@ -205,7 +205,7 @@
       document.getElementById(currentLanguage === 'en' ? 'screen-6' : 'screen-6-ar').style.display = 'none';
       document.getElementById(currentLanguage === 'en' ? 'screen-7' : 'screen-7-ar').style.display = 'flex';
 
-      let timer = 30;
+      let timer = 90;
       const circle = document.getElementById('timer-circle');
       const interval = setInterval(() => {
         circle.textContent = timer;
@@ -215,7 +215,7 @@
           goToFinishStep();
         }
       }, 1000);
-      let timer2 = 30;
+      let timer2 = 90;
       const circle2 = document.getElementById('timer-circle2');
       const interval2 = setInterval(() => {
         circle2.textContent = timer2;
